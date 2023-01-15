@@ -1,3 +1,14 @@
+/*
+Features:
+multiple lives,
+variable max score,
+different bricks with different score points,
+everytime ball hits paddle, the speed increase by 0.5,
+depending on the point of hit, ball gets the angular component,
+when ball is reborn, it gets random dx component (to simulate angle),
+after user lose, screen turns red and shows message & score,
+after user win, screen turns green and shows message & score,
+*/
 class block{
   constructor(x,y,w,h,c) {
     this.height=h;
@@ -120,7 +131,6 @@ function draw () {
   textSize(16);
   text("Score: "+ score,10,20);
   text("Life: "+ life,450,20);
-  // text("max: "+ max_score,250,20);
   if(game_lost){
     ball.hide_();
     background([255, 75, 75]);
@@ -154,13 +164,11 @@ function draw () {
   if (keyIsDown(LEFT_ARROW)&&(paddle.x>=0)) {
     paddle.move_x(-1);
   }
-    if (keyIsDown(RIGHT_ARROW)&&(paddle.right()<=width)) {
+  if (keyIsDown(RIGHT_ARROW)&&(paddle.right()<=width)) {
       paddle.move_x(+1);
   }
   
   ball.display();
-  // brick1.display();
-  // brick2.display();
   for(let i = 0; i<bricks_rows; i++){
     for(let j = 0;j<bricks_columns;j++){
         bricks[i][j].display();
@@ -185,7 +193,7 @@ function edgeBounce(){
       life-=1;
       ball.x=paddle.x_center();
       ball.y=paddle.y;
-      ball.dx=random(-10,10);
+      ball.dx=random(-30,30);
       ball.dy=2;
     }
     else{
