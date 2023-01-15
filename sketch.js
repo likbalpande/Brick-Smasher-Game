@@ -1,14 +1,26 @@
 class block{
-  constructor(x,y,w,h) {
+  constructor(x,y,w,h,c) {
     this.height=h;
     this.width=w;  
     this.x=x;
     this.y=y;
     this.dx=6;
+    this.color=c;
+    this.score=int(c);
     this.show=true;
   }
   display(){
     if(this.show){
+      if(this.color<1.8){
+        fill("white");
+      }
+      else if(this.color<2.5){
+        fill("yellow");
+      }
+      else{
+        fill("green");
+      }
+      if(this.color!=0)text("+"+this.score,this.x,this.y);
       rect(this.x,this.y,this.width,this.height);  
     }
   }
@@ -16,8 +28,6 @@ class block{
     this.x = this.x + (this.dx*a);
   }
   hide_(){
-    // this.x=-(this.width+5);
-    // this.y=-(this.height+5);
     this.show=false;
   }
   x_center(){
@@ -52,6 +62,7 @@ class ball_c{
   }
   hide_(){
     this.show=false;
+    this.dx=0;this.dy=0;
   }
   move_x(a) {
     this.x = this.x + (this.dx*a);
@@ -80,29 +91,26 @@ let ball;
 let bricks;
 let bricks_rows; let bricks_columns;
 let brick_width; let brick_height; let brick_padding;
-let score; let life;
+let score=0; let life=2; let max_score=0;
 let game_lost; let game_won;
 function setup() {
   createCanvas(500, 500);
   background("black");
-  // brick1 = new block(random(10,100),random(10,100),60,20);
-  // brick2 = new block(random(200,300),random(10,100),60,20);
-  score = 0; 
-  life = 2;
   game_lost=false;
   game_won=false;
-  paddle = new block((width / 2)-50,height-25,100,15);
-  ball = new ball_c((width / 2)-10,(height / 2)-10,20);
+  paddle = new block((width / 2)-50,height-25,100,15,0);
+  ball = new ball_c((width / 2)-10,(height / 2)-10,20,0);
   bricks=[];
   bricks_rows=3;
-  bricks_columns=5;
-  brick_width = 65;
+  bricks_columns=4;
+  brick_width = 80;
   brick_height = 25;
-  brick_padding = 28;
+  brick_padding = 40;
   for(let i = 0; i<bricks_rows; i++){
     bricks[i]=[];
     for(let j = 0;j<bricks_columns;j++){
-      bricks[i][j] = new block(brick_padding+(j*(brick_width+brick_padding)),brick_padding+(i*(brick_height+brick_padding)),brick_width,brick_height);
+      bricks[i][j] = new block(brick_padding+(j*(brick_width+brick_padding)),brick_padding+(i*(brick_height+brick_padding)),brick_width,brick_height,int(random(1,3)));
+      max_score = max_score+bricks[i][j].score;
     }
   }
 }
@@ -112,16 +120,18 @@ function draw () {
   textSize(16);
   text("Score: "+ score,10,20);
   text("Life: "+ life,450,20);
-  
+  // text("max: "+ max_score,250,20);
   if(game_lost){
     ball.hide_();
     background([255, 75, 75]);
     text("Game Over !",210,250);
+    text("Your Score: "+score,205,280);
   }
-  if(score==bricks_rows*bricks_columns){
+  if(score>=max_score){
     ball.hide_();
     background("green");
     text("You Won !",220,250);
+    text("Your Score: "+score,200,280);
   }
   
   edgeBounce();
@@ -132,17 +142,11 @@ function draw () {
     ball.dx=(ball.x-paddle.x_center())/20;
     ball.dy=-ball.dy;
   }
-  // if(isHit(brick1,ball)){
-  //   brick1.hide_();
-  // }
-  // if(isHit(brick2,ball)){
-  //   brick2.hide_();
-  // }
   for(let i = 0; i<bricks_rows; i++){
     for(let j = 0;j<bricks_columns;j++){
       if(isHit(bricks[i][j],ball)){
+        score = score + bricks[i][j].score;
         bricks[i][j].hide_();
-        score = score + 1;
       }
     }
   }
